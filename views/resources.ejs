@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AUK Study Hub | Resources</title>
+  <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/assets/css/main.css" rel="stylesheet">
+</head>
+
+<body>
+  <header class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+      <h1 class="sitename">AUK Study Hub</h1>
+      <nav>
+        <a href="/">Home</a> |
+        <a href="/about.html">About</a> |
+        <a href="/resources" class="active">Resources</a> |
+        <a href="/contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main py-5">
+    <div class="container">
+      <h2 class="mb-4">Uploaded Study PDFs</h2>
+
+      <% if (!files || files.length === 0) { %>
+        <p class="text-muted">No files uploaded yet.</p>
+      <% } else { %>
+        <ul class="list-group list-group-flush">
+          <% files.forEach(f => { %>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span class="text-truncate" style="max-width: 70%;">
+                <i class="bi bi-filetype-pdf me-2 text-danger"></i><%= f %>
+              </span>
+              <a class="btn btn-sm btn-success" href="/files/<%= f %>" download>
+                <i class="bi bi-download me-1"></i>Download
+              </a>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </div>
+  </main>
+
+  <footer class="footer text-center py-3 mt-5 border-top">
+    <p>© <%= new Date().getFullYear() %> AUK Study Hub — All Rights Reserved.</p>
+  </footer>
+
+  <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

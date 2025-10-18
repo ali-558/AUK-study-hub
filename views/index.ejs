@@ -7,6 +7,7 @@
   <meta name="description" content="Upload and share study PDFs">
   <meta name="keywords" content="AUK, study, PDFs, share">
 
+
   <!-- Favicons -->
   <link href="/assets/img/favicon.png" rel="icon">
   <link href="/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
@@ -51,7 +52,7 @@
 
 <a class="btn-getstarted" href="#upload">Get Started</a>
 
-      <a class="btn-getstarted" href="#upload">Get Started</a>
+      
     </div>
   </header>
 
@@ -79,7 +80,8 @@
     <!-- /Hero Section -->
 
     <!-- Upload Section -->
-    <section id="upload" class="py-5 bg-light">
+
+    <!-- <section id="upload" class="py-5 bg-light">
       <div class="container" data-aos="fade-up">
         <div class="row g-4">
           <div class="col-lg-6">
@@ -102,7 +104,7 @@
                 <% } %>
               </div>
             </div>
-          </div>
+          </div> -->
 
           <!-- Uploaded Files -->
           <div class="col-lg-6">
@@ -172,5 +174,38 @@
 
   <!-- Main JS File -->
   <script src="/assets/js/main.js"></script>
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const heroButton = document.querySelector(".btn-get-started");
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = ".pdf";
+    fileInput.style.display = "none";
+    document.body.appendChild(fileInput);
+
+    heroButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      fileInput.click();
+    });
+
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files.length > 0) {
+        const formData = new FormData();
+        formData.append("Filename", fileInput.files[0]);
+
+        fetch("/upload", {
+          method: "POST",
+          body: formData
+        })
+        .then(res => {
+          if (res.ok) alert(" PDF uploaded successfully!");
+          else alert(" Upload failed.");
+        })
+        .catch(err => alert("Error: " + err.message));
+      }
+    });
+  });
+</script>
+
 </body>
 </html>

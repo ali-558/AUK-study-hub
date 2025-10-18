@@ -60,7 +60,11 @@ app.get("/", (req, res) => {
     res.render("index", { files });
   });
 });
-
+app.get("/resources", (req, res) => {
+  const uploadDir = path.join(__dirname, "uploads");
+  const files = fs.readdirSync(uploadDir).filter(f => f.endsWith(".pdf"));
+  res.render("resources", { files });
+});
 // IMPORTANT: input name must be "Filename"
 app.post("/upload", (req, res) => {
   upload.single("Filename")(req, res, (err) => {
