@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Assistant - AUK Study Hub</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary-green: #5fcf80;
+      --dark-text: #2c3e50;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: #f8f9fa;
+    }
+
+    .header {
+      background: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 15px 0;
+    }
+
+    .sitename {
+      color: var(--primary-green);
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .chat-container {
+      max-width: 1200px;
+      margin: 30px auto;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .chat-header {
+      background: linear-gradient(135deg, var(--primary-green) 0%, #4ab869 100%);
+      color: white;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .chat-header h3 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .chat-modes {
+      display: flex;
+      gap: 10px;
+      padding: 15px 20px;
+      background: #f8f9fa;
+      border-bottom: 2px solid #e9ecef;
+      flex-wrap: wrap;
+    }
+
+    .mode-btn {
+      padding: 8px 20px;
+      border: 2px solid #dee2e6;
+      background: white;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .mode-btn:hover {
+      border-color: var(--primary-green);
+      color: var(--primary-green);
+    }
+
+    .mode-btn.active {
+      background: var(--primary-green);
+      color: white;
+      border-color: var(--primary-green);
+    }
+
+    .chat-messages {
+      height: 500px;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .message {
+      display: flex;
+      gap: 10px;
+      max-width: 80%;
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .message-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .message.ai .message-avatar {
+      background: linear-gradient(135deg, var(--primary-green) 0%, #4ab869 100%);
+      color: white;
+    }
+
+    .message.user .message-avatar {
+      background: #6c757d;
+      color: white;
+    }
+
+    .message-content {
+      background: #f8f9fa;
+      padding: 12px 18px;
+      border-radius: 15px;
+      line-height: 1.6;
+    }
+
+    .message.user .message-content {
+      background: var(--primary-green);
+      color: white;
+    }
+
+    .quiz-option {
+      background: white;
+      border: 2px solid #e9ecef;
+      padding: 12px 18px;
+      border-radius: 10px;
+      margin: 8px 0;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .quiz-option:hover {
+      border-color: var(--primary-green);
+      background: #f8f9fa;
+    }
+
+    .quiz-option.correct {
+      border-color: #28a745;
+      background: #d4edda;
+    }
+
+    .quiz-option.incorrect {
+      border-color: #dc3545;
+      background: #f8d7da;
+    }
+
+    .chat-input-area {
+      padding: 20px;
+      background: white;
+      border-top: 2px solid #e9ecef;
+    }
+
+    .input-group-custom {
+      display: flex;
+      gap: 10px;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 12px 18px;
+      border: 2px solid #e9ecef;
+      border-radius: 25px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    .chat-input:focus {
+      border-color: var(--primary-green);
+    }
+
+    .send-btn {
+      background: var(--primary-green);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .send-btn:hover:not(:disabled) {
+      background: #4ab869;
+      transform: translateY(-2px);
+    }
+
+    .send-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .typing-indicator {
+      display: flex;
+      gap: 5px;
+      padding: 15px;
+    }
+
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--primary-green);
+      border-radius: 50%;
+      animation: typing 1.4s infinite;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typing {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-10px); }
+    }
+
+    .quick-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 10px 0;
+    }
+
+    .quick-action-btn {
+      background: white;
+      border: 2px solid var(--primary-green);
+      color: var(--primary-green);
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .quick-action-btn:hover {
+      background: var(--primary-green);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+      <a href="/" class="text-decoration-none">
+        <h1 class="sitename">AUK STUDY HUB</h1>
+      </a>
+      <nav>
+        <a href="/" class="btn btn-outline-success">← Back to Home</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Chat Container -->
+  <div class="container">
+    <div class="chat-container">
+      <!-- Chat Header -->
+      <div class="chat-header">
+        <i class="bi bi-robot" style="font-size: 32px;"></i>
+        <div>
+          <h3>AI Study Assistant</h3>
+          <small>Powered by Google Gemini</small>
+        </div>
+      </div>
+
+      <!-- Chat Modes -->
+      <div class="chat-modes">
+        <button class="mode-btn active" data-mode="chat">
+          <i class="bi bi-chat-dots"></i> Chat with AI
+        </button>
+        <button class="mode-btn" data-mode="explain">
+          <i class="bi bi-lightbulb"></i> Explain Topics
+        </button>
+        <button class="mode-btn" data-mode="quiz">
+          <i class="bi bi-card-checklist"></i> Create Quiz
+        </button>
+        <button class="mode-btn" data-mode="summarize">
+          <i class="bi bi-file-text"></i> Summarize
+        </button>
+      </div>
+
+      <!-- Chat Messages -->
+      <div class="chat-messages" id="chatMessages">
+        <div class="message ai">
+          <div class="message-avatar">
+            <i class="bi bi-robot"></i>
+          </div>
+          <div class="message-content">
+            <strong>Hello! 👋</strong><br><br>
+            I'm your AI study assistant powered by Google Gemini. I can help you:
+            <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+              <li><strong>Chat with AI</strong> - Have a natural conversation and ask me anything</li>
+              <li><strong>Explain topics</strong> - Get clear explanations of complex concepts</li>
+              <li><strong>Create quizzes</strong> - Test your knowledge with custom questions</li>
+              <li><strong>Summarize content</strong> - Get quick summaries of study materials</li>
+            </ul>
+            <br>What would you like help with today?
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="chat-input-area">
+        <div class="quick-actions" id="quickActions">
+          <button class="quick-action-btn" onclick="sendQuickMessage('Tell me about the history of computers')">
+            History of computers
+          </button>
+          <button class="quick-action-btn" onclick="sendQuickMessage('Explain photosynthesis in simple terms')">
+            Explain photosynthesis
+          </button>
+          <button class="quick-action-btn" onclick="sendQuickMessage('Create a quiz on calculus derivatives')">
+            Quiz on derivatives
+          </button>
+          <button class="quick-action-btn" onclick="sendQuickMessage('Summarize the main causes of World War 2')">
+            Summarize WW2 causes
+          </button>
+        </div>
+
+        <div class="input-group-custom">
+          <input 
+            type="text" 
+            class="chat-input" 
+            id="chatInput" 
+            placeholder="Type your message..."
+            onkeypress="if(event.key==='Enter') sendMessage()"
+          >
+          <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+            <i class="bi bi-send"></i> Send
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentMode = 'chat'; // Default to chat mode
+    let isTyping = false;
+
+    // Mode switching
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentMode = this.dataset.mode;
+        
+        let modeMessage = '';
+        if (currentMode === 'chat') {
+          modeMessage = '💬 Chat mode activated! Ask me anything and let\'s have a conversation.';
+        } else if (currentMode === 'explain') {
+          modeMessage = '💡 I\'m ready to explain topics! Ask me anything.';
+        } else if (currentMode === 'quiz') {
+          modeMessage = '📝 I\'ll create a quiz for you! What topic would you like to be tested on?';
+        } else if (currentMode === 'summarize') {
+          modeMessage = '📄 I can summarize content for you. Share what you\'d like me to summarize!';
+        }
+        
+        addMessage(modeMessage, 'ai');
+      });
+    });
+
+    async function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const sendBtn = document.getElementById('sendBtn');
+      const message = input.value.trim();
+      
+      if (!message || isTyping) return;
+      
+      addMessage(message, 'user');
+      input.value = '';
+      
+      isTyping = true;
+      sendBtn.disabled = true;
+      showTypingIndicator();
+      
+      try {
+        const response = await fetch('/api/ai/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: message,
+            mode: currentMode
+          })
+        });
+        
+        const data = await response.json();
+        
+        hideTypingIndicator();
+        
+        if (data.success) {
+          // Handle different response formats
+          if (currentMode === 'quiz' && data.quiz) {
+            displayQuiz(data.quiz);
+          } else if (data.data) {
+            displayStructuredResponse(data.data);
+          } else if (data.response) {
+            addMessage(data.response, 'ai');
+          } else {
+            addMessage('I received your message but couldn\'t format a response properly. Please try again.', 'ai');
+          }
+          
+          // Add click handlers to quiz options
+          if (currentMode === 'quiz') {
+            setTimeout(() => {
+              document.querySelectorAll('.quiz-option').forEach(option => {
+                option.addEventListener('click', function() {
+                  checkAnswer(this);
+                });
+              });
+            }, 100);
+          }
+        } else {
+          // Handle errors including rate limiting
+          if (response.status === 429) {
+            addMessage('⏳ I\'m getting too many requests right now. Please wait a moment and try again. (Rate limit reached)', 'ai');
+          } else {
+            addMessage(data.error || 'Sorry, I encountered an error. Please try again.', 'ai');
+          }
+        }
+      } catch (error) {
+        hideTypingIndicator();
+        addMessage('Sorry, something went wrong. Please check your connection and try again.', 'ai');
+        console.error('Error:', error);
+      }
+      
+      isTyping = false;
+      sendBtn.disabled = false;
+    }
+
+    function displayStructuredResponse(data) {
+      let content = '';
+      
+      if (data.explanation) {
+        content += `<p>${data.explanation}</p>`;
+      }
+      
+      if (data.keyPoints && data.keyPoints.length > 0) {
+        content += '<br><strong>Key Points:</strong><ul style="margin-top: 8px;">';
+        data.keyPoints.forEach(point => {
+          content += `<li>${point}</li>`;
+        });
+        content += '</ul>';
+      }
+      
+      if (data.briefSummary) {
+        content += `<p><strong>Summary:</strong> ${data.briefSummary}</p>`;
+      }
+      
+      if (data.followUpQuestions && data.followUpQuestions.length > 0) {
+        content += '<br><strong>Follow-up questions you might have:</strong><ul style="margin-top: 8px;">';
+        data.followUpQuestions.forEach(q => {
+          content += `<li>${q}</li>`;
+        });
+        content += '</ul>';
+      }
+      
+      addMessage(content, 'ai');
+    }
+
+    function displayQuiz(quiz) {
+      if (!quiz.questions || quiz.questions.length === 0) {
+        addMessage('I couldn\'t create a quiz. Please try a different topic.', 'ai');
+        return;
+      }
+      
+      let quizHtml = '<strong>📝 Quiz Time!</strong><br><br>';
+      
+      quiz.questions.forEach((q, index) => {
+        quizHtml += `<div style="margin-bottom: 20px;">`;
+        quizHtml += `<strong>Question ${index + 1}:</strong> ${q.question}<br>`;
+        q.options.forEach((option, optIndex) => {
+          const isCorrect = optIndex === q.correctAnswer;
+          quizHtml += `
+            <div class="quiz-option" data-correct="${isCorrect}">
+              ${String.fromCharCode(65 + optIndex)}. ${option}
+            </div>
+          `;
+        });
+        quizHtml += `</div>`;
+      });
+      
+      addMessage(quizHtml, 'ai');
+    }
+
+    function sendQuickMessage(message) {
+      document.getElementById('chatInput').value = message;
+      sendMessage();
+    }
+
+    function addMessage(text, sender) {
+      const messagesDiv = document.getElementById('chatMessages');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${sender}`;
+      
+      const avatar = document.createElement('div');
+      avatar.className = 'message-avatar';
+      avatar.innerHTML = sender === 'ai' ? '<i class="bi bi-robot"></i>' : '<i class="bi bi-person"></i>';
+      
+      const content = document.createElement('div');
+      content.className = 'message-content';
+      content.innerHTML = text;
+      
+      messageDiv.appendChild(avatar);
+      messageDiv.appendChild(content);
+      messagesDiv.appendChild(messageDiv);
+      
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    function showTypingIndicator() {
+      const messagesDiv = document.getElementById('chatMessages');
+      const typingDiv = document.createElement('div');
+      typingDiv.id = 'typingIndicator';
+      typingDiv.className = 'message ai';
+      typingDiv.innerHTML = `
+        <div class="message-avatar"><i class="bi bi-robot"></i></div>
+        <div class="message-content typing-indicator">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      `;
+      messagesDiv.appendChild(typingDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    function hideTypingIndicator() {
+      const indicator = document.getElementById('typingIndicator');
+      if (indicator) indicator.remove();
+    }
+
+    function checkAnswer(element) {
+      if (element.classList.contains('correct') || element.classList.contains('incorrect')) {
+        return;
+      }
+      
+      const isCorrect = element.getAttribute('data-correct') === 'true';
+      
+      if (isCorrect) {
+        element.classList.add('correct');
+        setTimeout(() => {
+          addMessage('🎉 Correct! Great job!', 'ai');
+        }, 500);
+      } else {
+        element.classList.add('incorrect');
+        setTimeout(() => {
+          addMessage('❌ Not quite. Try another answer!', 'ai');
+        }, 500);
+      }
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

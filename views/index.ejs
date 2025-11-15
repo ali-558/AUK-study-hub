@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -6,7 +6,6 @@
   <title>AUK Study Hub</title>
   <meta name="description" content="Upload and share study PDFs">
   <meta name="keywords" content="AUK, study, PDFs, share">
-
 
   <!-- Favicons -->
   <link href="/assets/img/favicon.png" rel="icon">
@@ -34,132 +33,144 @@
   <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="container-fluid container-xl position-relative d-flex align-items-center">
       <a href="/" class="logo d-flex align-items-center me-auto">
-        <!-- Optional logo image -->
-        <!-- <img src="/assets/img/logo.webp" alt="" /> -->
         <h1 class="sitename">AUK Study Hub</h1>
       </a>
 
-<nav id="navmenu" class="navmenu">
-  <ul>
-    <li><a href="/" class="active">Home</a></li>
-    <li><a href="/about.html">About</a></li>
-    <li><a href="#upload">Upload</a></li>
-    <li><a href="/resources.html">Resources</a></li>
-    <li><a href="/contact.html">Contact</a></li>
-  </ul>
-  <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-</nav>
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="/" class="active">Home</a></li>
+          <li><a href="/about.html">About</a></li>
+          <li><a href="/resources">Resources</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
 
-<a class="btn-getstarted" href="#upload">Get Started</a>
-
-      
+      <% if (!currentUser) { %>
+        <!-- When logged OUT: Get Started opens popup -->
+        <button
+          type="button"
+          class="btn-getstarted d-flex flex-column justify-content-center align-items-center"
+          data-bs-toggle="modal"
+          data-bs-target="#getStartedModal"
+          style="line-height: 1.1;"
+        >
+          <span>Get Started</span>
+          <span class="small" style="font-size:11px;">
+            Already have an account? <u>Sign in</u>
+          </span>
+        </button>
+      <% } else { %>
+        <!-- When logged IN: show logout -->
+        <form action="/logout" method="POST" class="d-inline">
+          <button type="submit" class="btn-getstarted">
+            Logout (<%= currentUser.email %>)
+          </button>
+        </form>
+      <% } %>
     </div>
   </header>
 
   <main class="main">
 
     <!-- Hero Section -->
-<section id="hero" class="hero section dark-background d-flex align-items-center justify-content-between">
-  <!-- Left side (text content) -->
-  <div class="container" data-aos="fade-up" data-aos-delay="100">
-    <h2>Learning Today,<br>Leading Tomorrow</h2>
-    <p data-aos="fade-up" data-aos-delay="200">
-      Share and download study materials with your classmates.
-    </p>
-    <div class="d-flex mt-4" data-aos="fade-up" data-aos-delay="300">
-      <a href="#upload" class="btn-get-started">Upload a PDF</a>
-    </div>
-  </div>
-
-  <!-- Right side (AUK logo) -->
-  <div class="hero-logo" data-aos="fade-left" data-aos-delay="200">
-    <img src="assets/img/auk logo.jpg" alt="AUK Study Hub Logo" />
-  </div>
-</section>
-
-    <!-- /Hero Section -->
-
-    <!-- Upload Section -->
-
-    <!-- <section id="upload" class="py-5 bg-light">
-      <div class="container" data-aos="fade-up">
-        <div class="row g-4">
-          <div class="col-lg-6">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h3 class="mb-3">Upload a PDF</h3>
-                <form action="/upload" method="POST" enctype="multipart/form-data" class="row g-3">
-                  <div class="col-md-8">
-                    <input type="file" class="form-control" name="Filename" accept=".pdf" required>
-                  </div>
-                  <div class="col-md-4 d-grid">
-                    <button class="btn btn-primary">Upload</button>
-                  </div>
-                </form>
-                <% if (typeof error !== 'undefined' && error) { %>
-                  <div class="alert alert-danger mt-3"><%= error %></div>
-                <% } %>
-                <% if (typeof ok !== 'undefined' && ok) { %>
-                  <div class="alert alert-success mt-3">Uploaded successfully.</div>
-                <% } %>
-              </div>
-            </div>
-          </div> -->
-
-          <!-- Uploaded Files -->
-          <div class="col-lg-6">
-            <div class="card shadow-sm h-100">
-              <div class="card-body d-flex flex-column">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h3 class="m-0">Uploaded Files</h3>
-                </div>
-
-                <% if (!files || files.length === 0) { %>
-                  <p class="text-muted">No files uploaded yet.</p>
-                <% } else { %>
-                  <ul class="list-group list-group-flush">
-                    <% files.forEach(f => { %>
-                      <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span class="text-truncate" style="max-width: 70%;"><i class="bi bi-filetype-pdf me-2 text-danger"></i><%= f %></span>
-                        <span class="d-flex gap-2">
-                          <a class="btn btn-sm btn-success" href="/files/<%= f %>" download><i class="bi bi-download me-1"></i>Download</a>
-                          <!-- Optional delete (enable if you added the /delete route)
-                          <form action="/delete" method="POST" class="m-0">
-                            <input type="hidden" name="filename" value="<%= f %>">
-                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i>Delete</button>
-                          </form>
-                          -->
-                        </span>
-                      </li>
-                    <% }) %>
-                  </ul>
-                <% } %>
-                <div class="mt-auto small text-muted pt-3">PDFs are stored locally on this server.</div>
-              </div>
-            </div>
-          </div>
-          <!-- /Uploaded Files -->
+    <section id="hero" class="hero section dark-background d-flex align-items-center justify-content-between">
+      <!-- Left side (text content) -->
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <h2>Learning Today,<br>Leading Tomorrow</h2>
+        <p data-aos="fade-up" data-aos-delay="200">
+          Share and download study materials with your classmates.
+        </p>
+        <div class="d-flex mt-4" data-aos="fade-up" data-aos-delay="300">
+          <% if (currentUser) { %>
+            <!-- Rounded Upload button when logged in -->
+            <a
+              id="hero-upload-btn"
+              href="#"
+              class="btn-get-started"
+            >
+              Upload a PDF
+            </a>
+          <% } else { %>
+            <!-- When logged out, go to login page -->
+            <a href="/login" class="btn-get-started">Login to Upload</a>
+          <% } %>
         </div>
       </div>
-    </section>
-    <!-- /Upload Section -->
 
-    <!-- You can keep more Mentor sections below if you want -->
+      <!-- Right side (AUK logo) -->
+      <div class="hero-logo" data-aos="fade-left" data-aos-delay="200">
+        <img src="assets/img/auk logo.jpg" alt="AUK Study Hub Logo" />
+      </div>
+    </section>
+    <!-- /Hero Section -->
+
+    <% if (currentUser) { %>
+      <!-- Hidden upload form used by the hero Upload button -->
+      <form
+        id="hero-upload-form"
+        action="/upload"
+        method="POST"
+        enctype="multipart/form-data"
+        style="display:none;"
+      >
+        <input
+          type="file"
+          id="hero-file-input"
+          name="Filename"
+          accept=".pdf"
+        >
+      </form>
+    <% } %>
+
+    <!-- Get Started Modal -->
+    <div class="modal fade" id="getStartedModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Welcome to AUK Study Hub</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+            <p class="mb-3">
+              Create a free account to upload and download study PDFs.
+            </p>
+            <div class="d-grid gap-2">
+              <a href="/register" class="btn btn-success">
+                Get Started – Create an Account
+              </a>
+              <a href="/login" class="btn btn-outline-secondary">
+                I already have an account – Sign in
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /Get Started Modal -->
 
   </main>
 
   <!-- Footer -->
   <footer id="footer" class="footer position-relative light-background">
     <div class="container copyright text-center mt-4">
-      <p>© <span><%= new Date().getFullYear() %></span> <strong class="px-1 sitename">AUK Study Hub</strong> <span>All Rights Reserved</span></p>
+      <p>© <span><%= new Date().getFullYear() %></span>
+         <strong class="px-1 sitename">AUK Study Hub</strong>
+         <span>All Rights Reserved</span>
+      </p>
       <div class="credits">
-        <p style="font-size:12px;opacity:.7;">Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a></p>
+        <p style="font-size:12px;opacity:.7;">
+          Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+        </p>
       </div>
     </div>
   </footer>
 
   <!-- Scroll Top -->
-  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
+    <i class="bi bi-arrow-up-short"></i>
+  </a>
 
   <!-- Preloader -->
   <div id="preloader"></div>
@@ -174,38 +185,27 @@
 
   <!-- Main JS File -->
   <script src="/assets/js/main.js"></script>
+
+  <!-- Hero upload button logic (only works when logged in) -->
   <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const heroButton = document.querySelector(".btn-get-started");
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = ".pdf";
-    fileInput.style.display = "none";
-    document.body.appendChild(fileInput);
+    document.addEventListener("DOMContentLoaded", () => {
+      const uploadBtn = document.getElementById("hero-upload-btn");
+      const fileInput = document.getElementById("hero-file-input");
+      const form      = document.getElementById("hero-upload-form");
 
-    heroButton.addEventListener("click", (e) => {
-      e.preventDefault();
-      fileInput.click();
-    });
+      if (uploadBtn && fileInput && form) {
+        uploadBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          fileInput.click();
+        });
 
-    fileInput.addEventListener("change", () => {
-      if (fileInput.files.length > 0) {
-        const formData = new FormData();
-        formData.append("Filename", fileInput.files[0]);
-
-        fetch("/upload", {
-          method: "POST",
-          body: formData
-        })
-        .then(res => {
-          if (res.ok) alert(" PDF uploaded successfully!");
-          else alert(" Upload failed.");
-        })
-        .catch(err => alert("Error: " + err.message));
+        fileInput.addEventListener("change", () => {
+          if (fileInput.files.length > 0) {
+            form.submit(); // POST /upload then redirect to /resources
+          }
+        });
       }
     });
-  });
-</script>
-
+  </script>
 </body>
 </html>

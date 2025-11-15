@@ -2210,3 +2210,59 @@ section,
 .starter-section {
   /* Add your styles here */
 }
+
+/*--------------------------------------------------------------
+# AI Chat Bubble
+--------------------------------------------------------------*/
+/*--------------------------------------------------------------
+# AI Helper Floating Bubble
+--------------------------------------------------------------*/
+#ai-helper-container {
+  position: fixed;
+  bottom: 80px;  /* sits above the scroll-top button */
+  right: 90px;
+  z-index: 99990;
+}
+
+.ai-helper-bubble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: var(--accent-color);   /* same green as site */
+  color: var(--contrast-color);
+  font-size: 26px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.ai-helper-bubble:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  background-color: color-mix(in srgb, var(--accent-color), transparent 10%);
+}
+
+.ai-helper-bubble i {
+  color: var(--contrast-color);
+}
+
+/* Slightly smaller on mobile */
+@media (max-width: 575px) {
+  #ai-helper-container {
+    bottom: 70px;
+    right: 70px;
+  }
+
+  .ai-helper-bubble {
+    width: 50px;
+    height: 50px;
+    font-size: 22px;
+  }
+}
