@@ -110,7 +110,7 @@ app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use("/files", express.static(UPLOAD_DIR)); // serve uploaded files
 
-// ⬇ NEW: mount AI routes so /ai/chat, /ai/whatever works
+// ⬇ NEW: mount AI routes so /api/ai/chat, /api/ai/whatever works
 app.use("/api/ai", aiRoutes);
 
 // ---------- Routes ----------
@@ -126,9 +126,19 @@ app.get("/", (req, res) => {
   });
 });
 
-// Full-screen AI page (your ai-assistant.ejs)
-app.get("/ai", requireLogin, (req, res) => {
-  res.render("ai-assistant", { currentUser: req.session.user || null });
+// ✅ FIXED: AI Assistant page - serves the HTML file from public folder
+// Remove requireLogin if you want anyone to access it, or keep it for logged-in users only
+app.get("/ai-assistant", (req, res) => {
+  const filePath = path.join(__dirname, "public", "ai-assistant.html");
+  console.log("📄 Serving AI Assistant from:", filePath);
+  res.sendFile(filePath);
+});
+
+// ✅ FIXED: Alternative route /ai (same page)
+app.get("/ai", (req, res) => {
+  const filePath = path.join(__dirname, "public", "ai-assistant.html");
+  console.log("📄 Serving AI Assistant from:", filePath);
+  res.sendFile(filePath);
 });
 
 // REGISTER new user
@@ -340,7 +350,9 @@ async function startServer() {
     app.locals.db = db;
 
     app.listen(PORT, () => {
-      console.log(`Server running at http://localhost:${PORT}`);
+      console.log(`✅ Server running at http://localhost:${PORT}`);
+      console.log(`🤖 AI Assistant available at http://localhost:${PORT}/ai-assistant`);
+      console.log(`📚 Resources page at http://localhost:${PORT}/resources`);
     });
   } catch (err) {
     console.error("Failed to start server:", err);
